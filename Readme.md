@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Екатерина Иванова](https://up.htmlacademy.ru/javascript/18/user/861641).
-* Наставник: [Дмитрий Рябинин](https://htmlacademy.ru/profile/haschish).
+* Наставник: [Дмитрий Рябинин](https://up.htmlacademy.ru/javascript/18/user/63289).
 
 ---
 
