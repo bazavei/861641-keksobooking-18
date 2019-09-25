@@ -2,14 +2,20 @@
 
 var COUNT = 8;
 
-document.querySelector('.map').classList.remove('map--faded');
+var mapWidth = document.querySelector('.map__pins').offsetWidth;
+var types = ['palace', 'flat', 'house', 'bungalo'];
+var time = ['12:00', '13:00', '14:00'];
+var pinWidth = document.querySelector('.map__pin').clientWidth;
+var pinHeight = document.querySelector('.map__pin').clientHeight;
+var listPins = document.querySelector('.map__pins');
+var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 
 var getRandom = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 };
 
-var types = ['palace', 'flat', 'house', 'bungalo'];
-var time = ['12:00', '13:00', '14:00'];
+var maxX = getRandom(0, mapWidth) - pinWidth / 2;
+var maxY = getRandom(130, 630) - pinHeight;
 
 var getCardsArr = function (count) {
   var data = [];
@@ -36,8 +42,8 @@ var getCardsArr = function (count) {
             photo: 'photoArr'
           },
           location: {
-            x: getRandom(0, mapWidth),
-            y: getRandom(130, 630)
+            x: getRandom(0, maxX),
+            y: getRandom(130, maxY)
           }
         }
     );
@@ -46,17 +52,14 @@ var getCardsArr = function (count) {
 };
 
 var cards = getCardsArr(COUNT);
-var mapWidth = document.querySelector('.map__pins').offsetWidth;
-
-var listPins = document.querySelector('.map__pins');
-var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 
 var renderPin = function (pin) {
   var pinElement = pinTemplate.cloneNode(true);
 
-  pinElement.style = 'left: ' + pin.location.x + 'px; top: ' + pin.location.y + 'px;';
+  pinElement.style.left = pin.location.x + 'px';
+  pinElement.style.top = pin.location.y + 'px';
   pinElement.querySelector('img').src = pin.author.avatar;
-  pinElement.querySelector('img').alt = pin.offer.type;
+  pinElement.querySelector('img').alt = pin.offer.title;
 
   return pinElement;
 };
@@ -69,4 +72,5 @@ var renderPins = function (array) {
   listPins.appendChild(fragment);
 };
 
+document.querySelector('.map').classList.remove('map--faded');
 renderPins(cards);
