@@ -5,6 +5,8 @@ var COUNT = 8;
 var mapWidth = document.querySelector('.map__pins').offsetWidth;
 var types = ['palace', 'flat', 'house', 'bungalo'];
 var time = ['12:00', '13:00', '14:00'];
+var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+var photos = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 var pinWidth = document.querySelector('.map__pin').clientWidth;
 var pinHeight = document.querySelector('.map__pin').clientHeight;
 var listPins = document.querySelector('.map__pins');
@@ -14,14 +16,28 @@ var getRandom = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 };
 
+var getRandomArr = function (array) {
+  var randomLength = getRandom(0, array.length);
+  var randomData = [];
+  for (var j = 0; j < randomLength; j++) {
+    var index = Math.floor(Math.random() * (array.length - 1));
+    var element = array[index];
+    if (!randomData.includes(element)) {
+      randomData.push(element);
+    }
+  }
+  return randomData;
+};
+
 var maxX = getRandom(0, mapWidth) - pinWidth / 2;
 var maxY = getRandom(130, 630) - pinHeight;
 
 var getCardsArr = function (count) {
   var data = [];
-  var offerType = types[Math.floor(Math.random() * types.length)];
-  var checkTime = time[Math.floor(Math.random() * time.length)];
   for (var i = 0; i < count; i++) {
+    var offerType = types[Math.floor(Math.random() * types.length)];
+    var checkTime = time[Math.floor(Math.random() * time.length)];
+
     data.push(
         {
           author: {
@@ -37,9 +53,9 @@ var getCardsArr = function (count) {
             guests: Number,
             checkin: checkTime,
             checkout: checkTime,
-            features: 'featuresArr',
+            features: getRandomArr(features),
             description: String,
-            photo: 'photoArr'
+            photo: getRandomArr(photos)
           },
           location: {
             x: getRandom(0, maxX),
