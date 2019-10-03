@@ -2,6 +2,8 @@
 
 var COUNT = 8;
 var ENTER_KEYCODE = 13;
+var PIN_WIDTH = 65;
+var PIN_HEIGHT = 65;
 
 var mapWidth = document.querySelector('.map__pins').offsetWidth;
 var types = ['palace', 'flat', 'house', 'bungalo'];
@@ -127,16 +129,33 @@ var openCard = function (card) {
   filtersContainer.prepend(cardElement);
 };
 
-var startMap = function () {
+var getPinCoordinate = function (activePage) {
+  var locationMainPin = {
+    x: null,
+    y: null
+  };
+  if (activePage) {
+    locationMainPin.y = mainPin.offsetTop;
+    locationMainPin.x = mainPin.offsetLeft;
+
+  } else {
+    locationMainPin.y = mainPin.offsetTop - PIN_HEIGHT;
+    locationMainPin.x = mainPin.offsetLeft - PIN_WIDTH / 2;
+  }
+
+  addressInput.value = 'x:' + locationMainPin.x + ' ' + 'y:' + locationMainPin.y;
+};
+
+var onMainPinClick = function () {
   renderPins(cards);
   document.querySelector('.map').classList.remove('map--faded');
   adForm.classList.remove('ad-form--disabled');
-  addressInput.value = 'x:' + mainPin.style.left + ' ' + 'y:' + mainPin.style.top;
+  getPinCoordinate(true);
 };
 
 var dependCapacity = function () {
-  var countRoom = parseInt(roomNumberSelect.options[roomNumberSelect.selectedIndex].value, 10);
-  var countQuests = parseInt(capacitySelest.options[capacitySelest.selectedIndex].value, 10);
+  var countRoom = parseInt(roomNumberSelect.value, 10);
+  var countQuests = parseInt(capacitySelest.value, 10);
 
   if (countRoom < countQuests) {
     capacitySelest.setCustomValidity('выбранное количество гостей не подходит под количество комнат');
@@ -149,12 +168,13 @@ var dependCapacity = function () {
   }
 };
 
-mainPin.addEventListener('mousedown', startMap);
+mainPin.addEventListener('mousedown', onMainPinClick);
 mainPin.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
-    startMap();
+    onMainPinClick();
   }
 });
 
 dependCapacity();
+adForm.addEventListener('change', dependCapacity, true);
 openCard(cards[0]);
