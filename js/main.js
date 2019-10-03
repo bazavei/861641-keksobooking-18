@@ -1,6 +1,9 @@
 'use strict';
 
 var COUNT = 8;
+var ENTER_KEYCODE = 13;
+var PIN_WIDTH = 65;
+var PIN_HEIGHT = 65;
 
 var mapWidth = document.querySelector('.map__pins').offsetWidth;
 var types = ['palace', 'flat', 'house', 'bungalo'];
@@ -13,6 +16,11 @@ var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pi
 var filtersContainer = document.querySelector('.map__filters-container');
 var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 var photoTemplate = cardTemplate.querySelector('.popup__photo');
+var mainPin = document.querySelector('.map__pin--main');
+var adForm = document.querySelector('.ad-form');
+var addressInput = adForm.querySelector('input[name=address]');
+var roomNumberSelect = adForm.querySelector('#room_number');
+var capacitySelest = adForm.querySelector('#capacity');
 
 var getRandom = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -21,7 +29,7 @@ var getRandom = function (min, max) {
 var getRandomArr = function (array) {
   var randomLength = getRandom(0, array.length);
   var randomData = [];
-  for (var j = 0; j < randomLength; j++) {
+  for (var j = 0; j <= randomLength; j++) {
     var index = Math.floor(Math.random() * (array.length - 1));
     var element = array[index];
     if (!randomData.includes(element)) {
@@ -35,7 +43,7 @@ var maxX = mapWidth - pinWidth;
 
 var getCardsArr = function (count) {
   var data = [];
-  for (var i = 0; i <= count; i++) {
+  for (var i = 0; i < count; i++) {
     var offerType = types[Math.floor(Math.random() * types.length)];
     var checkTime = time[Math.floor(Math.random() * time.length)];
 
@@ -47,7 +55,7 @@ var getCardsArr = function (count) {
 
           offer: {
             title: '',
-            address: 'location.x, location.y',
+            address: '600, 350',
             price: 0,
             type: offerType,
             rooms: 0,
@@ -121,6 +129,52 @@ var openCard = function (card) {
   filtersContainer.prepend(cardElement);
 };
 
-document.querySelector('.map').classList.remove('map--faded');
-renderPins(cards);
+var getPinCoordinate = function (activePage) {
+  var locationMainPin = {
+    x: null,
+    y: null
+  };
+  if (activePage) {
+    locationMainPin.y = mainPin.offsetTop;
+    locationMainPin.x = mainPin.offsetLeft;
+
+  } else {
+    locationMainPin.y = mainPin.offsetTop - PIN_HEIGHT;
+    locationMainPin.x = mainPin.offsetLeft - PIN_WIDTH / 2;
+  }
+
+  addressInput.value = 'x:' + locationMainPin.x + ' ' + 'y:' + locationMainPin.y;
+};
+
+var onMainPinClick = function () {
+  renderPins(cards);
+  document.querySelector('.map').classList.remove('map--faded');
+  adForm.classList.remove('ad-form--disabled');
+  getPinCoordinate(true);
+};
+
+var dependCapacity = function () {
+  var countRoom = parseInt(roomNumberSelect.value, 10);
+  var countQuests = parseInt(capacitySelest.value, 10);
+
+  if (countRoom < countQuests) {
+    capacitySelest.setCustomValidity('выбранное количество гостей не подходит под количество комнат');
+  } else if (countRoom === 100 && countQuests !== 0) {
+    capacitySelest.setCustomValidity('выбранное количество гостей не подходит под количество комнат');
+  } else if (countRoom !== 100 && countQuests === 0) {
+    capacitySelest.setCustomValidity('выбранное количество гостей не подходит под количество комнат');
+  } else {
+    capacitySelest.setCustomValidity('');
+  }
+};
+
+mainPin.addEventListener('mousedown', onMainPinClick);
+mainPin.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    onMainPinClick();
+  }
+});
+
+dependCapacity();
+adForm.addEventListener('change', dependCapacity, true);
 openCard(cards[0]);
