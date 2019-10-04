@@ -3,8 +3,10 @@
 // константы
 var COUNT = 8;
 var ENTER_KEYCODE = 13;
+var ESC_KEYCODE = 27;
 var PIN_WIDTH = 65;
 var PIN_HEIGHT = 65;
+var PIN_TIP_HEIGHT = 15;
 
 // массивы
 var types = ['palace', 'flat', 'house', 'bungalo'];
@@ -26,14 +28,13 @@ var adForm = document.querySelector('.ad-form');
 var addressInput = adForm.querySelector('input[name=address]');
 var roomNumberSelect = adForm.querySelector('#room_number');
 var capacitySelest = adForm.querySelector('#capacity');
-// var mapPins = document.querySelectorAll('.map__pin');
-// var mapPin = document.querySelector('.map__pin');
 var popup = document.querySelector('#card');
 var closeButton = cardTemplate.querySelector('.popup__close');
 
 var price = adForm.querySelector('#price');
 var timeIn = document.querySelector('#timein');
 var timeOut = document.querySelector('#timeout');
+var type = document.querySelector('#type');
 
 // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 
@@ -104,6 +105,16 @@ var renderPin = function (pin) {
   pinElement.querySelector('img').src = pin.author.avatar;
   pinElement.querySelector('img').alt = pin.offer.title;
 
+  pinElement.addEventListener('click', function () {
+    openCard(pin);
+  });
+
+  pinElement.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      openCard(pin);
+    }
+  });
+
   return pinElement;
 };
 
@@ -139,6 +150,16 @@ var renderCard = function (card) {
   }
   cardElement.querySelector('.popup__avatar').src = card.author.avatar;
 
+  cardElement.querySelector('.popup__close').addEventListener('click', function () {
+    cardElement.remove();
+  });
+
+  document.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      cardElement.remove();
+    }
+  });
+
   return cardElement;
 };
 
@@ -151,21 +172,19 @@ var closeCard = function () {
   popup.classList.add('hidden');
 };
 
-var getPinCoordinate = function (activePage) {
+var setPinCoordinate = function (activePage) {
   var locationMainPin = {
     x: null,
     y: null
   };
   if (activePage) {
-    locationMainPin.y = mainPin.offsetTop;
-    locationMainPin.x = mainPin.offsetLeft;
+    locationMainPin.x = Math.floor(mainPin.offsetLeft + PIN_WIDTH / 2 + PIN_TIP_HEIGHT);
+    locationMainPin.y = Math.floor(mainPin.offsetTop + PIN_HEIGHT + PIN_TIP_HEIGHT);
 
   } else {
-    locationMainPin.y = mainPin.offsetTop - PIN_HEIGHT;
-    locationMainPin.x = mainPin.offsetLeft - PIN_WIDTH / 2;
+    locationMainPin.y = Math.floor(mainPin.offsetTop + PIN_HEIGHT / 2 + PIN_TIP_HEIGHT);
   }
-
-  addressInput.value = 'x:' + locationMainPin.x + ' ' + 'y:' + locationMainPin.y;
+  addressInput.value = locationMainPin.x + ' ' + locationMainPin.y;
 };
 
 // ВАЛИДАЦИЯ
@@ -186,16 +205,32 @@ var dependCapacity = function () {
 };
 
 var onTimeInChange = function () {
-  timeIn.options.value = timeOut.options.value;
+  timeOut.value = timeIn.value;
 };
 
 var onTimeOutChange = function () {
-  timeOut.options.value = timeIn.options.value;
+  timeIn.value = timeOut.value;
 };
 
 var onPriceChange = function () {
   if (price.value > 1000000) {
     price.setCustomValidity('Цена слишком высока');
+  }
+};
+
+var typeDepend = function () {
+  if (type.value === 'bungalo') {
+    price.placeholder = '0';
+    price.min = '0';
+  } else if (type.value === 'flat') {
+    price.placeholder = '1000';
+    price.min = '1000';
+  } else if (type.value === 'house') {
+    price.placeholder = '5000';
+    price.min = 5000;
+  } else if (type.value === 'palace') {
+    price.placeholder = '10000';
+    price.min = 10000;
   }
 };
 
@@ -205,32 +240,8 @@ var onMainPinClick = function () {
   renderPins(cards);
   document.querySelector('.map').classList.remove('map--faded');
   adForm.classList.remove('ad-form--disabled');
-  getPinCoordinate(true);
+  setPinCoordinate(true);
 };
-
-// var onMapPinClick = function () {
-//   if (mapPin.classList.contains('map__pin--main')) {
-//     openCard(cards[0]);
-//   }
-// };
-
-// var onMapPinClick = function () {
-//   if (mapPin.classList.contains('map__pin--main')) {
-//     renderPins(cards);
-//     document.querySelector('.map').classList.remove('map--faded');
-//     adForm.classList.remove('ad-form--disabled');
-//     getPinCoordinate(true);
-
-//   } else {
-//     openCard(cards[0]);
-//   }
-// };
-
-// for (var i = 0; i < mapPins.length; ++i) {
-//   mapPins[i].addEventListener('click', onMapPinClick);
-// }
-
-// mapPin.addEventListener('mousedown', onMapPinClick(mapPins));
 
 mainPin.addEventListener('mousedown', onMainPinClick);
 mainPin.addEventListener('keydown', function (evt) {
@@ -239,9 +250,11 @@ mainPin.addEventListener('keydown', function (evt) {
   }
 });
 adForm.addEventListener('change', dependCapacity, true);
-price.addEventListener('change', onPriceChange, true);
-timeIn.addEventListener('change', onTimeInChange, true);
-timeOut.addEventListener('change', onTimeOutChange, true);
+type.addEventListener('change', typeDepend);
+
+price.addEventListener('change', onPriceChange);
+timeIn.addEventListener('change', onTimeInChange);
+timeOut.addEventListener('change', onTimeOutChange);
 
 closeButton.addEventListener('click', function () {
   closeCard();
@@ -250,4 +263,5 @@ closeButton.addEventListener('click', function () {
 // вызовы
 
 dependCapacity();
-openCard(cards[0]);
+typeDepend();
+// openCard(cards[0]);
