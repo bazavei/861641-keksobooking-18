@@ -1,26 +1,41 @@
 'use strict';
-
+// ПЕРЕМЕННЫЕ
+// константы
 var COUNT = 8;
 var ENTER_KEYCODE = 13;
 var PIN_WIDTH = 65;
 var PIN_HEIGHT = 65;
 
-var mapWidth = document.querySelector('.map__pins').offsetWidth;
+// массивы
 var types = ['palace', 'flat', 'house', 'bungalo'];
 var time = ['12:00', '13:00', '14:00'];
-var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var photos = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
-var pinWidth = document.querySelector('.map__pin').clientWidth;
-var listPins = document.querySelector('.map__pins');
+var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+
+// шаблоны
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
-var filtersContainer = document.querySelector('.map__filters-container');
 var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 var photoTemplate = cardTemplate.querySelector('.popup__photo');
+
+var mapWidth = document.querySelector('.map__pins').offsetWidth;
+var pinWidth = document.querySelector('.map__pin').clientWidth;
+var pins = document.querySelector('.map__pins');
+var filtersContainer = document.querySelector('.map__filters-container');
 var mainPin = document.querySelector('.map__pin--main');
 var adForm = document.querySelector('.ad-form');
 var addressInput = adForm.querySelector('input[name=address]');
 var roomNumberSelect = adForm.querySelector('#room_number');
 var capacitySelest = adForm.querySelector('#capacity');
+// var mapPins = document.querySelectorAll('.map__pin');
+// var mapPin = document.querySelector('.map__pin');
+var popup = document.querySelector('#card');
+var closeButton = cardTemplate.querySelector('.popup__close');
+
+var price = adForm.querySelector('#price');
+var timeIn = document.querySelector('#timein');
+var timeOut = document.querySelector('#timeout');
+
+// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 
 var getRandom = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -39,9 +54,10 @@ var getRandomArr = function (array) {
   return randomData;
 };
 
-var maxX = mapWidth - pinWidth;
+// получение массивов
 
 var getCardsArr = function (count) {
+  var maxX = mapWidth - pinWidth;
   var data = [];
   for (var i = 0; i < count; i++) {
     var offerType = types[Math.floor(Math.random() * types.length)];
@@ -78,6 +94,8 @@ var getCardsArr = function (count) {
 
 var cards = getCardsArr(COUNT);
 
+// функции для отображения
+
 var renderPin = function (pin) {
   var pinElement = pinTemplate.cloneNode(true);
 
@@ -94,7 +112,7 @@ var renderPins = function (array) {
   for (var j = 0; j < array.length; j++) {
     fragment.appendChild(renderPin(array[j]));
   }
-  listPins.appendChild(fragment);
+  pins.appendChild(fragment);
 };
 
 var renderCard = function (card) {
@@ -129,6 +147,10 @@ var openCard = function (card) {
   filtersContainer.prepend(cardElement);
 };
 
+var closeCard = function () {
+  popup.classList.add('hidden');
+};
+
 var getPinCoordinate = function (activePage) {
   var locationMainPin = {
     x: null,
@@ -146,12 +168,7 @@ var getPinCoordinate = function (activePage) {
   addressInput.value = 'x:' + locationMainPin.x + ' ' + 'y:' + locationMainPin.y;
 };
 
-var onMainPinClick = function () {
-  renderPins(cards);
-  document.querySelector('.map').classList.remove('map--faded');
-  adForm.classList.remove('ad-form--disabled');
-  getPinCoordinate(true);
-};
+// ВАЛИДАЦИЯ
 
 var dependCapacity = function () {
   var countRoom = parseInt(roomNumberSelect.value, 10);
@@ -168,13 +185,69 @@ var dependCapacity = function () {
   }
 };
 
+var onTimeInChange = function () {
+  timeIn.options.value = timeOut.options.value;
+};
+
+var onTimeOutChange = function () {
+  timeOut.options.value = timeIn.options.value;
+};
+
+var onPriceChange = function () {
+  if (price.value > 1000000) {
+    price.setCustomValidity('Цена слишком высока');
+  }
+};
+
+// обработчики
+
+var onMainPinClick = function () {
+  renderPins(cards);
+  document.querySelector('.map').classList.remove('map--faded');
+  adForm.classList.remove('ad-form--disabled');
+  getPinCoordinate(true);
+};
+
+// var onMapPinClick = function () {
+//   if (mapPin.classList.contains('map__pin--main')) {
+//     openCard(cards[0]);
+//   }
+// };
+
+// var onMapPinClick = function () {
+//   if (mapPin.classList.contains('map__pin--main')) {
+//     renderPins(cards);
+//     document.querySelector('.map').classList.remove('map--faded');
+//     adForm.classList.remove('ad-form--disabled');
+//     getPinCoordinate(true);
+
+//   } else {
+//     openCard(cards[0]);
+//   }
+// };
+
+// for (var i = 0; i < mapPins.length; ++i) {
+//   mapPins[i].addEventListener('click', onMapPinClick);
+// }
+
+// mapPin.addEventListener('mousedown', onMapPinClick(mapPins));
+
 mainPin.addEventListener('mousedown', onMainPinClick);
 mainPin.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
     onMainPinClick();
   }
 });
+adForm.addEventListener('change', dependCapacity, true);
+price.addEventListener('change', onPriceChange, true);
+timeIn.addEventListener('change', onTimeInChange, true);
+timeOut.addEventListener('change', onTimeOutChange, true);
+
+closeButton.addEventListener('click', function () {
+  closeCard();
+});
+
+// вызовы
 
 dependCapacity();
-adForm.addEventListener('change', dependCapacity, true);
 openCard(cards[0]);
