@@ -21,7 +21,7 @@ var photoTemplate = cardTemplate.querySelector('.popup__photo');
 
 var mapWidth = document.querySelector('.map__pins').offsetWidth;
 var pinWidth = document.querySelector('.map__pin').clientWidth;
-var pins = document.querySelector('.map__pins');
+var mapPinsElement = document.querySelector('.map__pins');
 var filtersContainer = document.querySelector('.map__filters-container');
 var mainPin = document.querySelector('.map__pin--main');
 var adForm = document.querySelector('.ad-form');
@@ -32,9 +32,9 @@ var popup = document.querySelector('#card');
 var closeButton = cardTemplate.querySelector('.popup__close');
 
 var price = adForm.querySelector('#price');
-var timeIn = document.querySelector('#timein');
-var timeOut = document.querySelector('#timeout');
-var type = document.querySelector('#type');
+var timeIn = adForm.querySelector('#timein');
+var timeOut = adForm.querySelector('#timeout');
+var type = adForm.querySelector('#type');
 
 // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 
@@ -109,12 +109,6 @@ var renderPin = function (pin) {
     openCard(pin);
   });
 
-  pinElement.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ENTER_KEYCODE) {
-      openCard(pin);
-    }
-  });
-
   return pinElement;
 };
 
@@ -123,7 +117,7 @@ var renderPins = function (array) {
   for (var j = 0; j < array.length; j++) {
     fragment.appendChild(renderPin(array[j]));
   }
-  pins.appendChild(fragment);
+  mapPinsElement.appendChild(fragment);
 };
 
 var renderCard = function (card) {
@@ -189,7 +183,7 @@ var setPinCoordinate = function (activePage) {
 
 // ВАЛИДАЦИЯ
 
-var dependCapacity = function () {
+var onCapacityChange = function () {
   var countRoom = parseInt(roomNumberSelect.value, 10);
   var countQuests = parseInt(capacitySelest.value, 10);
 
@@ -218,7 +212,7 @@ var onPriceChange = function () {
   }
 };
 
-var typeDepend = function () {
+var onTypeChange = function () {
   if (type.value === 'bungalo') {
     price.placeholder = '0';
     price.min = '0';
@@ -249,8 +243,8 @@ mainPin.addEventListener('keydown', function (evt) {
     onMainPinClick();
   }
 });
-adForm.addEventListener('change', dependCapacity, true);
-type.addEventListener('change', typeDepend);
+adForm.addEventListener('change', onCapacityChange, true);
+type.addEventListener('change', onTypeChange);
 
 price.addEventListener('change', onPriceChange);
 timeIn.addEventListener('change', onTimeInChange);
@@ -262,6 +256,6 @@ closeButton.addEventListener('click', function () {
 
 // вызовы
 
-dependCapacity();
-typeDepend();
+onCapacityChange();
+onTypeChange();
 // openCard(cards[0]);
