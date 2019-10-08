@@ -10,6 +10,7 @@ var PIN_TIP_HEIGHT = 15;
 
 // массивы
 var types = ['palace', 'flat', 'house', 'bungalo'];
+
 var time = ['12:00', '13:00', '14:00'];
 var photos = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
@@ -28,8 +29,6 @@ var adForm = document.querySelector('.ad-form');
 var addressInput = adForm.querySelector('input[name=address]');
 var roomNumberSelect = adForm.querySelector('#room_number');
 var capacitySelest = adForm.querySelector('#capacity');
-var popup = document.querySelector('#card');
-var closeButton = cardTemplate.querySelector('.popup__close');
 
 var price = adForm.querySelector('#price');
 var timeIn = adForm.querySelector('#timein');
@@ -162,10 +161,6 @@ var openCard = function (card) {
   filtersContainer.prepend(cardElement);
 };
 
-var closeCard = function () {
-  popup.classList.add('hidden');
-};
-
 var setPinCoordinate = function (activePage) {
   var locationMainPin = {
     x: null,
@@ -212,20 +207,17 @@ var onPriceChange = function () {
   }
 };
 
+var typeMinPriceMap = {
+  bungalo: 0,
+  flat: 1000,
+  house: 5000,
+  palace: 10000
+};
+
 var onTypeChange = function () {
-  if (type.value === 'bungalo') {
-    price.placeholder = '0';
-    price.min = '0';
-  } else if (type.value === 'flat') {
-    price.placeholder = '1000';
-    price.min = '1000';
-  } else if (type.value === 'house') {
-    price.placeholder = '5000';
-    price.min = 5000;
-  } else if (type.value === 'palace') {
-    price.placeholder = '10000';
-    price.min = 10000;
-  }
+  var minPrice = typeMinPriceMap[type.value];
+  price.placeholder = minPrice;
+  price.min = minPrice;
 };
 
 // обработчики
@@ -249,10 +241,6 @@ type.addEventListener('change', onTypeChange);
 price.addEventListener('change', onPriceChange);
 timeIn.addEventListener('change', onTimeInChange);
 timeOut.addEventListener('change', onTimeOutChange);
-
-closeButton.addEventListener('click', function () {
-  closeCard();
-});
 
 // вызовы
 
