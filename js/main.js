@@ -1,26 +1,41 @@
 'use strict';
-
+// ПЕРЕМЕННЫЕ
+// константы
 var COUNT = 8;
 var ENTER_KEYCODE = 13;
+var ESC_KEYCODE = 27;
 var PIN_WIDTH = 65;
 var PIN_HEIGHT = 65;
+var PIN_TIP_HEIGHT = 15;
 
-var mapWidth = document.querySelector('.map__pins').offsetWidth;
+// массивы
 var types = ['palace', 'flat', 'house', 'bungalo'];
+
 var time = ['12:00', '13:00', '14:00'];
-var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var photos = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
-var pinWidth = document.querySelector('.map__pin').clientWidth;
-var listPins = document.querySelector('.map__pins');
+var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+
+// шаблоны
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
-var filtersContainer = document.querySelector('.map__filters-container');
 var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 var photoTemplate = cardTemplate.querySelector('.popup__photo');
+
+var mapWidth = document.querySelector('.map__pins').offsetWidth;
+var pinWidth = document.querySelector('.map__pin').clientWidth;
+var mapPinsElement = document.querySelector('.map__pins');
+var filtersContainer = document.querySelector('.map__filters-container');
 var mainPin = document.querySelector('.map__pin--main');
 var adForm = document.querySelector('.ad-form');
 var addressInput = adForm.querySelector('input[name=address]');
 var roomNumberSelect = adForm.querySelector('#room_number');
 var capacitySelest = adForm.querySelector('#capacity');
+
+var price = adForm.querySelector('#price');
+var timeIn = adForm.querySelector('#timein');
+var timeOut = adForm.querySelector('#timeout');
+var type = adForm.querySelector('#type');
+
+// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 
 var getRandom = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -39,9 +54,10 @@ var getRandomArr = function (array) {
   return randomData;
 };
 
-var maxX = mapWidth - pinWidth;
+// получение массивов
 
 var getCardsArr = function (count) {
+  var maxX = mapWidth - pinWidth;
   var data = [];
   for (var i = 0; i < count; i++) {
     var offerType = types[Math.floor(Math.random() * types.length)];
@@ -78,6 +94,8 @@ var getCardsArr = function (count) {
 
 var cards = getCardsArr(COUNT);
 
+// функции для отображения
+
 var renderPin = function (pin) {
   var pinElement = pinTemplate.cloneNode(true);
 
@@ -85,6 +103,10 @@ var renderPin = function (pin) {
   pinElement.style.top = pin.location.y + 'px';
   pinElement.querySelector('img').src = pin.author.avatar;
   pinElement.querySelector('img').alt = pin.offer.title;
+
+  pinElement.addEventListener('click', function () {
+    openCard(pin);
+  });
 
   return pinElement;
 };
@@ -94,7 +116,7 @@ var renderPins = function (array) {
   for (var j = 0; j < array.length; j++) {
     fragment.appendChild(renderPin(array[j]));
   }
-  listPins.appendChild(fragment);
+  mapPinsElement.appendChild(fragment);
 };
 
 var renderCard = function (card) {
@@ -121,6 +143,16 @@ var renderCard = function (card) {
   }
   cardElement.querySelector('.popup__avatar').src = card.author.avatar;
 
+  cardElement.querySelector('.popup__close').addEventListener('click', function () {
+    cardElement.remove();
+  });
+
+  document.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      cardElement.remove();
+    }
+  });
+
   return cardElement;
 };
 
@@ -129,31 +161,24 @@ var openCard = function (card) {
   filtersContainer.prepend(cardElement);
 };
 
-var getPinCoordinate = function (activePage) {
+var setPinCoordinate = function (activePage) {
   var locationMainPin = {
     x: null,
     y: null
   };
   if (activePage) {
-    locationMainPin.y = mainPin.offsetTop;
-    locationMainPin.x = mainPin.offsetLeft;
+    locationMainPin.x = Math.floor(mainPin.offsetLeft + PIN_WIDTH / 2 + PIN_TIP_HEIGHT);
+    locationMainPin.y = Math.floor(mainPin.offsetTop + PIN_HEIGHT + PIN_TIP_HEIGHT);
 
   } else {
-    locationMainPin.y = mainPin.offsetTop - PIN_HEIGHT;
-    locationMainPin.x = mainPin.offsetLeft - PIN_WIDTH / 2;
+    locationMainPin.y = Math.floor(mainPin.offsetTop + PIN_HEIGHT / 2 + PIN_TIP_HEIGHT);
   }
-
-  addressInput.value = 'x:' + locationMainPin.x + ' ' + 'y:' + locationMainPin.y;
+  addressInput.value = locationMainPin.x + ' ' + locationMainPin.y;
 };
 
-var onMainPinClick = function () {
-  renderPins(cards);
-  document.querySelector('.map').classList.remove('map--faded');
-  adForm.classList.remove('ad-form--disabled');
-  getPinCoordinate(true);
-};
+// ВАЛИДАЦИЯ
 
-var dependCapacity = function () {
+var onCapacityChange = function () {
   var countRoom = parseInt(roomNumberSelect.value, 10);
   var countQuests = parseInt(capacitySelest.value, 10);
 
@@ -168,13 +193,57 @@ var dependCapacity = function () {
   }
 };
 
+var onTimeInChange = function () {
+  timeOut.value = timeIn.value;
+};
+
+var onTimeOutChange = function () {
+  timeIn.value = timeOut.value;
+};
+
+var onPriceChange = function () {
+  if (price.value > 1000000) {
+    price.setCustomValidity('Цена слишком высока');
+  }
+};
+
+var typeMinPriceMap = {
+  bungalo: 0,
+  flat: 1000,
+  house: 5000,
+  palace: 10000
+};
+
+var onTypeChange = function () {
+  var minPrice = typeMinPriceMap[type.value];
+  price.placeholder = minPrice;
+  price.min = minPrice;
+};
+
+// обработчики
+
+var onMainPinClick = function () {
+  renderPins(cards);
+  document.querySelector('.map').classList.remove('map--faded');
+  adForm.classList.remove('ad-form--disabled');
+  setPinCoordinate(true);
+};
+
 mainPin.addEventListener('mousedown', onMainPinClick);
 mainPin.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
     onMainPinClick();
   }
 });
+adForm.addEventListener('change', onCapacityChange, true);
+type.addEventListener('change', onTypeChange);
 
-dependCapacity();
-adForm.addEventListener('change', dependCapacity, true);
-openCard(cards[0]);
+price.addEventListener('change', onPriceChange);
+timeIn.addEventListener('change', onTimeInChange);
+timeOut.addEventListener('change', onTimeOutChange);
+
+// вызовы
+
+onCapacityChange();
+onTypeChange();
+// openCard(cards[0]);
