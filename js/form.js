@@ -55,6 +55,14 @@
     price.min = minPrice;
   };
 
+  var activate = function () {
+    adForm.classList.remove('ad-form--disabled');
+  };
+
+  var setAddress = function (coordX, coordY) {
+    addressInput.value = coordX + ' ' + coordY;
+  };
+
   adForm.addEventListener('change', onCapacityChange, true);
   type.addEventListener('change', onTypeChange);
 
@@ -66,7 +74,7 @@
   onTypeChange();
 
   window.form = {
-    adForm: adForm,
-    addressInput: addressInput
+    activate: activate,
+    setAddress: setAddress
   };
 })();

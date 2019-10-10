@@ -44,6 +44,6 @@
   };
 
   window.card = {
-    renderCard: renderCard
+    render: renderCard
   };
 })();

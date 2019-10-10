@@ -21,7 +21,7 @@
   };
 
   var openCard = function (card) {
-    var cardElement = window.card.renderCard(card);
+    var cardElement = window.card.render(card);
     filtersContainer.prepend(cardElement);
   };
 
@@ -37,13 +37,13 @@
     } else {
       locationMainPin.y = Math.floor(mainPin.offsetTop + PIN_HEIGHT / 2 + PIN_TIP_HEIGHT);
     }
-    window.form.addressInput.value = locationMainPin.x + ' ' + locationMainPin.y;
+    window.form.setAddress(locationMainPin.x, locationMainPin.y);
   };
 
   var onMainPinClick = function () {
     renderPins(window.data.cards);
     document.querySelector('.map').classList.remove('map--faded');
-    window.form.adForm.classList.remove('ad-form--disabled');
+    window.form.activate();
     setPinCoordinate(true);
   };
 
