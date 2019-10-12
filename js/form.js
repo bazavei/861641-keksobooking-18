@@ -60,7 +60,7 @@
   };
 
   var setAddress = function (coordX, coordY) {
-    addressInput.value = coordX + ' ' + coordY;
+    addressInput.value = coordX + ', ' + coordY;
   };
 
   adForm.addEventListener('change', onCapacityChange, true);

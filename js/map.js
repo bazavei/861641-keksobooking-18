@@ -7,6 +7,10 @@
   var PIN_WIDTH = 65;
   var PIN_HEIGHT = 65;
   var PIN_TIP_HEIGHT = 15;
+  var MIN_Y = 130;
+  var MAX_VALUE = 630;
+  var MAX_Y = MAX_VALUE - PIN_HEIGHT - PIN_TIP_HEIGHT;
+  var MAX_X = document.querySelector('.map__pins').offsetWidth - PIN_WIDTH;
 
   var mapPinsElement = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
@@ -67,9 +71,18 @@
         x: moveEvt.clientX,
         y: moveEvt.clientY
       };
+      var valueY = mainPin.offsetTop - shift.y;
 
-      mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
-      mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
+      valueY = Math.min(valueY, MAX_Y);
+      valueY = Math.max(valueY, MIN_Y);
+      mainPin.style.top = valueY + 'px';
+
+      var valueX = mainPin.offsetLeft - shift.x;
+      valueX = Math.min(valueX, MAX_X);
+      valueX = Math.max(valueX, 0);
+      mainPin.style.left = valueX + 'px';
+
+      window.form.setAddress(valueX, valueY);
     };
 
     var onMouseUp = function (upEvt) {
