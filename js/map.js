@@ -7,6 +7,8 @@
   var PIN_WIDTH = 65;
   var PIN_HEIGHT = 65;
   var PIN_TIP_HEIGHT = 15;
+  var MIN_VALUE = 130;
+  var MAX_VALUE = 630;
 
   var mapPinsElement = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
@@ -69,13 +71,22 @@
         y: moveEvt.clientY
       };
 
-      if (mainPin.offsetTop - shift.y <= 130) {
-        mainPin.style.top = 130 + 'px';
-      } else if (mainPin.offsetTop - shift.y + PIN_HEIGHT >= 630) {
-        mainPin.style.top = 630 - PIN_HEIGHT;
-      } else {
-        mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
-      }
+      // if (mainPin.offsetTop - shift.y <= MIN_VALUE) {
+      //   mainPin.style.top = MIN_VALUE + 'px';
+      // } else if (mainPin.offsetTop - shift.y + PIN_HEIGHT >= MAX_VALUE) {
+      //   mainPin.style.top = MAX_VALUE - PIN_HEIGHT;
+      // } else {
+      //   mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
+      // }
+      var valueY = mainPin.offsetTop - shift.y;
+      // mainPin.style.top = Math.max(MIN_VALUE, valueY) + 'px';
+      // mainPin.style.top = Math.min((MAX_VALUE - PIN_HEIGHT), valueY) + 'px';
+      mainPin.style.top = Math.min(Math.max((MIN_VALUE, valueY), MIN_VALUE), MAX_VALUE - PIN_HEIGHT - PIN_TIP_HEIGHT) + 'px';
+
+
+      // var value = Math.max(MIN_VALUE, value);
+      // value = Math.min(MAX_VALUE, value);
+      // mainPin.style.top = value + 'px';
 
       if (mainPin.offsetLeft - shift.x <= 0) {
         mainPin.style.left = 0 + 'px';
