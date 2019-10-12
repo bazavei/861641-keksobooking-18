@@ -7,13 +7,14 @@
   var PIN_WIDTH = 65;
   var PIN_HEIGHT = 65;
   var PIN_TIP_HEIGHT = 15;
-  var MIN_VALUE = 130;
+  var MIN_Y = 130;
   var MAX_VALUE = 630;
+  var MAX_Y = MAX_VALUE - PIN_HEIGHT - PIN_TIP_HEIGHT;
+  var MAX_X = document.querySelector('.map__pins').offsetWidth - PIN_WIDTH;
 
   var mapPinsElement = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
   var filtersContainer = document.querySelector('.map__filters-container');
-  var mapWidth = document.querySelector('.map__pins').offsetWidth;
 
   var renderPins = function (array) {
     var fragment = document.createDocumentFragment();
@@ -70,31 +71,18 @@
         x: moveEvt.clientX,
         y: moveEvt.clientY
       };
-
-      // if (mainPin.offsetTop - shift.y <= MIN_VALUE) {
-      //   mainPin.style.top = MIN_VALUE + 'px';
-      // } else if (mainPin.offsetTop - shift.y + PIN_HEIGHT >= MAX_VALUE) {
-      //   mainPin.style.top = MAX_VALUE - PIN_HEIGHT;
-      // } else {
-      //   mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
-      // }
       var valueY = mainPin.offsetTop - shift.y;
-      // mainPin.style.top = Math.max(MIN_VALUE, valueY) + 'px';
-      // mainPin.style.top = Math.min((MAX_VALUE - PIN_HEIGHT), valueY) + 'px';
-      mainPin.style.top = Math.min(Math.max((MIN_VALUE, valueY), MIN_VALUE), MAX_VALUE - PIN_HEIGHT - PIN_TIP_HEIGHT) + 'px';
 
+      valueY = Math.min(valueY, MAX_Y);
+      valueY = Math.max(valueY, MIN_Y);
+      mainPin.style.top = valueY + 'px';
 
-      // var value = Math.max(MIN_VALUE, value);
-      // value = Math.min(MAX_VALUE, value);
-      // mainPin.style.top = value + 'px';
+      var valueX = mainPin.offsetLeft - shift.x;
+      valueX = Math.min(valueX, MAX_X);
+      valueX = Math.max(valueX, 0);
+      mainPin.style.left = valueX + 'px';
 
-      if (mainPin.offsetLeft - shift.x <= 0) {
-        mainPin.style.left = 0 + 'px';
-      } else if (mainPin.offsetLeft - shift.x + PIN_WIDTH >= mapWidth) {
-        mainPin.style.left = mapWidth - PIN_WIDTH + 'px';
-      } else {
-        mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
-      }
+      window.form.setAddress(valueX, valueY);
     };
 
     var onMouseUp = function (upEvt) {
