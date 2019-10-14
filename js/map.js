@@ -16,13 +16,13 @@
   var mainPin = document.querySelector('.map__pin--main');
   var filtersContainer = document.querySelector('.map__filters-container');
 
-  // var renderPins = function (array) {
-  //   var fragment = document.createDocumentFragment();
-  //   for (var j = 0; j < array.length; j++) {
-  //     fragment.appendChild(window.pin.renderPin(array[j]));
-  //   }
-  //   mapPinsElement.appendChild(fragment);
-  // };
+  var renderPins = function (array) {
+    var fragment = document.createDocumentFragment();
+    for (var j = 0; j < array.length; j++) {
+      fragment.appendChild(window.pin.renderPin(array[j]));
+    }
+    mapPinsElement.appendChild(fragment);
+  };
 
   var onLoad = function (cards) {
     var fragment = document.createDocumentFragment();
@@ -30,14 +30,6 @@
       fragment.appendChild(window.pin.renderPin(cards[i]));
     }
     mapPinsElement.appendChild(fragment);
-  };
-
-  var onError = function () {
-    var errorNode = document.querySelector('#error').content.querySelector('.error');
-    var main = document.querySelector('main');
-    var fragment = document.createDocumentFragment();
-    fragment.appendChild(errorNode);
-    main.appendChild(fragment);
   };
 
   var openCard = function (card) {
@@ -62,10 +54,20 @@
 
   var onMainPinClick = function () {
     // renderPins(window.data.cards);
-    window.backend.load(onLoad, onError);
-    document.querySelector('.map').classList.remove('map--faded');
-    window.form.activate();
-    setPinCoordinate(true);
+    defaultPageStatus(true);
+  };
+
+  var defaultPageStatus = function (status) {
+    if (status) {
+      document.querySelector('.map').classList.remove('map--faded');
+      window.form.activate();
+      setPinCoordinate(true);
+      window.backend.load(onLoad, window.error.show);
+    } else {
+      document.querySelector('.map').classList.add('map--faded');
+      window.form.deactivate();
+      setPinCoordinate(false);
+    }
   };
 
   mainPin.addEventListener('mousedown', function (evt) {
@@ -118,9 +120,11 @@
     window.util.isEnterEvent(evt, onMainPinClick);
   });
 
+  defaultPageStatus();
   window.map = {
-    // renderPins: renderPins,
+    renderPins: renderPins,
     openCard: openCard,
-    mainPin: mainPin
+    mainPin: mainPin,
+    defaultPageStatus: defaultPageStatus
   };
 })();
