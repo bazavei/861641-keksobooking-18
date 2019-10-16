@@ -19,10 +19,22 @@
   var renderPins = function (array) {
     var fragment = document.createDocumentFragment();
     for (var j = 0; j < array.length; j++) {
-      fragment.appendChild(window.pin.renderPin(array[j]));
+      fragment.appendChild(window.pin.render(array[j]));
     }
     mapPinsElement.appendChild(fragment);
   };
+
+  var onLoad = function (cards) {
+    renderPins(cards);
+  };
+
+  // var onLoad = function (cards) {
+  //   var fragment = document.createDocumentFragment();
+  //   for (var i = 0; i < cards.length; i++) {
+  //     fragment.appendChild(window.pin.renderPin(cards[i]));
+  //   }
+  //   mapPinsElement.appendChild(fragment);
+  // };
 
   var openCard = function (card) {
     var cardElement = window.card.render(card);
@@ -45,10 +57,21 @@
   };
 
   var onMainPinClick = function () {
-    renderPins(window.data.cards);
-    document.querySelector('.map').classList.remove('map--faded');
-    window.form.activate();
-    setPinCoordinate(true);
+    // renderPins(window.data.cards);
+    defaultPageStatus(true);
+  };
+
+  var defaultPageStatus = function (status) {
+    if (status) {
+      document.querySelector('.map').classList.remove('map--faded');
+      window.form.activate();
+      setPinCoordinate(true);
+      window.backend.load(onLoad, window.message.error);
+    } else {
+      document.querySelector('.map').classList.add('map--faded');
+      window.form.deactivate();
+      setPinCoordinate(false);
+    }
   };
 
   mainPin.addEventListener('mousedown', function (evt) {
@@ -101,9 +124,11 @@
     window.util.isEnterEvent(evt, onMainPinClick);
   });
 
+  defaultPageStatus();
   window.map = {
     renderPins: renderPins,
     openCard: openCard,
-    mainPin: mainPin
+    mainPin: mainPin,
+    defaultPageStatus: defaultPageStatus
   };
 })();

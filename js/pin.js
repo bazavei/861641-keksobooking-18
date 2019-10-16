@@ -19,7 +19,19 @@
     return pinElement;
   };
 
+  var removePin = function () {
+    var pins = document.querySelectorAll('.map__pin');
+
+    pins.forEach(function (item) {
+      if (!item.classList.contains('map__pin--main')) {
+        item.parentNode.removeChild(item);
+      }
+    });
+  };
+
+
   window.pin = {
-    renderPin: renderPin,
+    render: renderPin,
+    remove: removePin
   };
 })();

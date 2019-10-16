@@ -55,13 +55,47 @@
     price.min = minPrice;
   };
 
+  var setDisabled = function (list, value) {
+    for (var i = 0; i < list.length; i++) {
+      list[i].disabled = value;
+    }
+    adForm.querySelector('#description').disabled = value;
+    adForm.querySelector('.ad-form__element--submit').disabled = value;
+  };
+
+  var inputs = adForm.querySelectorAll('input');
+  var selects = adForm.querySelectorAll('select');
+
+
   var activate = function () {
     adForm.classList.remove('ad-form--disabled');
+    setDisabled(inputs, false);
+    setDisabled(selects, false);
+  };
+
+  var deactivate = function () {
+    adForm.classList.add('ad-form--disabled');
+    setDisabled(inputs, true);
+    setDisabled(selects, true);
   };
 
   var setAddress = function (coordX, coordY) {
     addressInput.value = coordX + ', ' + coordY;
   };
+
+  var onSave = function () {
+    adForm.reset();
+    // deactivate();
+    window.map.defaultPageStatus(false);
+    window.message.success();
+    window.pin.remove();
+    window.card.remove();
+  };
+
+  adForm.addEventListener('submit', function (evt) {
+    window.backend.save(new FormData(adForm), onSave, window.message.error);
+    evt.preventDefault();
+  });
 
   adForm.addEventListener('change', onCapacityChange, true);
   type.addEventListener('change', onTypeChange);
@@ -75,6 +109,7 @@
 
   window.form = {
     activate: activate,
-    setAddress: setAddress
+    setAddress: setAddress,
+    deactivate: deactivate
   };
 })();
