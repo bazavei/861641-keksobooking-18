@@ -23,9 +23,9 @@
     cardElement.querySelector('.popup__description').textContent = card.offer.description;
     var photoElement = cardElement.querySelector('.popup__photos');
     photoElement.innerHTML = '';
-    for (var j = 0; j < card.offer.photo.length; j++) {
+    for (var j = 0; j < card.offer.photos.length; j++) {
       var photo = photoTemplate.cloneNode(true);
-      photo.src = card.offer.photo[j];
+      photo.src = card.offer.photos[j];
       photoElement.appendChild(photo);
     }
     cardElement.querySelector('.popup__avatar').src = card.author.avatar;
@@ -43,7 +43,16 @@
     return cardElement;
   };
 
+  var removeCard = function () {
+    var mapCard = document.querySelector('.map__card');
+
+    if (mapCard) {
+      mapCard.remove();
+    }
+  };
+
   window.card = {
-    render: renderCard
+    render: renderCard,
+    remove: removeCard
   };
 })();

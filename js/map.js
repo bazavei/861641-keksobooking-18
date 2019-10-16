@@ -19,7 +19,7 @@
   var renderPins = function (array) {
     var fragment = document.createDocumentFragment();
     for (var j = 0; j < array.length; j++) {
-      fragment.appendChild(window.pin.renderPin(array[j]));
+      fragment.appendChild(window.pin.render(array[j]));
     }
     mapPinsElement.appendChild(fragment);
   };

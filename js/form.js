@@ -88,6 +88,8 @@
     // deactivate();
     window.map.defaultPageStatus(false);
     window.message.success();
+    window.pin.remove();
+    window.card.remove();
   };
 
   adForm.addEventListener('submit', function (evt) {
