@@ -25,12 +25,16 @@
   };
 
   var onLoad = function (cards) {
-    var fragment = document.createDocumentFragment();
-    for (var i = 0; i < cards.length; i++) {
-      fragment.appendChild(window.pin.renderPin(cards[i]));
-    }
-    mapPinsElement.appendChild(fragment);
+    renderPins(cards);
   };
+
+  // var onLoad = function (cards) {
+  //   var fragment = document.createDocumentFragment();
+  //   for (var i = 0; i < cards.length; i++) {
+  //     fragment.appendChild(window.pin.renderPin(cards[i]));
+  //   }
+  //   mapPinsElement.appendChild(fragment);
+  // };
 
   var openCard = function (card) {
     var cardElement = window.card.render(card);
@@ -62,7 +66,7 @@
       document.querySelector('.map').classList.remove('map--faded');
       window.form.activate();
       setPinCoordinate(true);
-      window.backend.load(onLoad, window.error.show);
+      window.backend.load(onLoad, window.message.error);
     } else {
       document.querySelector('.map').classList.add('map--faded');
       window.form.deactivate();

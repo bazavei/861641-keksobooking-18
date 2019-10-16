@@ -55,31 +55,28 @@
     price.min = minPrice;
   };
 
+  var setDisabled = function (list, value) {
+    for (var i = 0; i < list.length; i++) {
+      list[i].disabled = value;
+    }
+    adForm.querySelector('#description').disabled = value;
+    adForm.querySelector('.ad-form__element--submit').disabled = value;
+  };
+
+  var inputs = adForm.querySelectorAll('input');
+  var selects = adForm.querySelectorAll('select');
+
+
   var activate = function () {
     adForm.classList.remove('ad-form--disabled');
-    var inputs = adForm.querySelectorAll('input');
-    var selects = adForm.querySelectorAll('select');
-    for (var i = 0; i < inputs.length; i++) {
-      inputs[i].removeAttribute('disabled', 'disabled');
-    }
-    for (i = 0; i < selects.length; i++) {
-      selects[i].removeAttribute('disabled', 'disabled');
-    }
-    adForm.querySelector('#description').removeAttribute('disabled', 'disabled');
-
+    setDisabled(inputs, false);
+    setDisabled(selects, false);
   };
 
   var deactivate = function () {
     adForm.classList.add('ad-form--disabled');
-    var inputs = adForm.querySelectorAll('input');
-    var selects = adForm.querySelectorAll('select');
-    for (var i = 0; i < inputs.length; i++) {
-      inputs[i].setAttribute('disabled', 'disabled');
-    }
-    for (i = 0; i < selects.length; i++) {
-      selects[i].setAttribute('disabled', 'disabled');
-    }
-    adForm.querySelector('#description').setAttribute('disabled', 'disabled');
+    setDisabled(inputs, true);
+    setDisabled(selects, true);
   };
 
   var setAddress = function (coordX, coordY) {
@@ -94,7 +91,7 @@
   };
 
   adForm.addEventListener('submit', function (evt) {
-    window.backend.save(new FormData(adForm), onSave, window.error.show);
+    window.backend.save(new FormData(adForm), onSave, window.message.error);
     evt.preventDefault();
   });
 
