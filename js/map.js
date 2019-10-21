@@ -24,17 +24,10 @@
     mapPinsElement.appendChild(fragment);
   };
 
-  var onLoad = function (cards) {
-    renderPins(cards);
+  var onLoad = function (data) {
+    data = window.filter.pinsAmount(data);
+    renderPins(data);
   };
-
-  // var onLoad = function (cards) {
-  //   var fragment = document.createDocumentFragment();
-  //   for (var i = 0; i < cards.length; i++) {
-  //     fragment.appendChild(window.pin.renderPin(cards[i]));
-  //   }
-  //   mapPinsElement.appendChild(fragment);
-  // };
 
   var openCard = function (card) {
     var cardElement = window.card.render(card);
@@ -57,7 +50,6 @@
   };
 
   var onMainPinClick = function () {
-    // renderPins(window.data.cards);
     defaultPageStatus(true);
   };
 
