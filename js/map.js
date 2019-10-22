@@ -26,6 +26,7 @@
 
   var onLoad = function (data) {
     data = window.filter.pinsAmount(data);
+    window.onFilterFormChange(data);
     renderPins(data);
   };
 

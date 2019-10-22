@@ -2,6 +2,7 @@
 
 (function () {
   var mapFilterContainer = document.querySelector('.map__filters-container');
+  var housingType = mapFilterContainer.querySelector('#housing-type');
 
   var pinsAmount = function (data, count) {
     if (!count || count <= 0) {
@@ -13,19 +14,28 @@
     return data;
   };
 
-  mapFilterContainer.addEventListener('change', function () {
-    window.pin.remove();
+  var filterType = function (pins) {
+    if (housingType.value === 'any') {
+      return pins;
+    }
 
-    window.backend.load(function (xhr) {
-      var data = xhr.response;
-
-      // data = pinsAmount(data);
-
-      // window.pin.render(data);
-      window.map.renderPins(data);
+    return pins.filter(function (pin) {
+      return pin.offer.type === housingType.value;
     });
+  };
 
-  }, true);
+  var sortData = function (data) {
+    var filteredData = filterType(data);
+
+    return filteredData;
+  };
+
+  window.onFilterFormChange = function (data) {
+    mapFilterContainer.addEventListener('change', function () {
+      window.pin.remove();
+      window.map.renderPins(sortData(data));
+    });
+  };
 
   window.filter = {
     pinsAmount: pinsAmount
