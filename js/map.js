@@ -69,15 +69,6 @@
     });
   };
 
-  // var filterData = function (data) {
-  //   var filtered = data.filter(filterByType)
-  //                       .filter(filterByPrice)
-  //                       .filter(filterByRooms)
-  //                       .filter(filterByGuests)
-  //                       .filter(filterByFeatures)
-  //                       .slice(0, 5);
-  //   return filtered;
-  // };
   var filterData = function (pins) {
     var filtered = pins.filter(filterByType)
                         .filter(filterByPrice)
@@ -88,31 +79,16 @@
     return filtered;
   };
 
-  // var onFilterFormChange = function (data) {
-  //   mapFilterContainer.addEventListener('change', function () {
-  //     window.pin.remove();
-  //     renderPins(filterData(data));
-  //   });
-  // };
-
-  // var onFilterFormChange = window.util.debounce(function (data) {
-  //   mapFilterContainer.addEventListener('change', function () {
-  //     window.pin.remove();
-  //     renderPins(filterData(data));
-  //   });
-  // });
-  mapFilterContainer.addEventListener('change', function () {
+  var onFilterFormChangeDebounce = window.util.debounce(function () {
     window.pin.remove();
     renderPins(filterData(data));
   });
 
+  mapFilterContainer.addEventListener('change', onFilterFormChangeDebounce);
+
   var onLoad = function (res) {
     data = res;
     renderPins(filterData(data));
-    // data = window.filter.pinsAmount(data);
-    // onFilterFormChange(data);
-    // filterData(data);
-    // renderPins(data);
   };
 
   var openCard = function (card) {
