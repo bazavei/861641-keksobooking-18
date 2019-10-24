@@ -29,26 +29,20 @@
   var housingPrice = mapFilterContainer.querySelector('#housing-price');
   var housingRooms = mapFilterContainer.querySelector('#housing-rooms');
   var housingGuests = mapFilterContainer.querySelector('#housing-guests');
-  // var housingFeatures = mapFilterContainer.querySelectorAll('#housing-features');
 
   var filterByType = function (item) {
     return (housingType.value === 'any' ? true : housingType.value === item.offer.type);
   };
 
   var filterByPrice = function (item) {
-
-    if (housingPrice.value === 'low') {
-      return item.offer.price <= 10000;
+    switch (housingPrice.value) {
+      case 'low':
+        return item.offer.price <= 10000;
+      case 'middle':
+        return item.offer.price >= 10000 && item.offer.price <= 50000;
+      case 'high':
+        return item.offer.price >= 50000;
     }
-
-    if (housingPrice.value === 'middle') {
-      return item.offer.price >= 10000 && item.offer.price <= 50000;
-    }
-
-    if (housingPrice.value === 'high') {
-      return item.offer.price >= 50000;
-    }
-
     return (housingPrice.value === 'any' ? true : housingPrice.value === item.offer.price);
   };
 
@@ -60,23 +54,43 @@
     return (housingGuests.value === 'any' ? true : item.offer.guests === parseInt(housingGuests.value, 10));
   };
 
+
+  var filterByFeatures = function (item) {
+    var valueCheck = filtersContainer.querySelectorAll('.map__checkbox:checked');
+
+    valueCheck = [].map.call(valueCheck, function (i) {
+      return i;
+    });
+
+    var offerFeatures = item.offer.features;
+    return valueCheck.every(function (feature) {
+      return offerFeatures.includes(feature.value);
+    });
+  };
+
   var filterData = function (data) {
     var filtered = data.filter(filterByType)
                         .filter(filterByPrice)
                         .filter(filterByRooms)
                         .filter(filterByGuests)
-                        // .filter(filterByFeatures)
+                        .filter(filterByFeatures)
                         .slice(0, 5);
     return filtered;
   };
 
-  var onFilterFormChange = function (data) {
+  // var onFilterFormChange = function (data) {
+  //   mapFilterContainer.addEventListener('change', function () {
+  //     window.pin.remove();
+  //     renderPins(filterData(data));
+  //   });
+  // };
+
+  var onFilterFormChange = window.util.debounce(function (data) {
     mapFilterContainer.addEventListener('change', function () {
       window.pin.remove();
       renderPins(filterData(data));
     });
-  };
-
+  });
 
   var onLoad = function (data) {
     // data = window.filter.pinsAmount(data);
