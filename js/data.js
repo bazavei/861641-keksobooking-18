@@ -10,7 +10,6 @@
   var mapWidth = document.querySelector('.map__pins').offsetWidth;
   var pinWidth = document.querySelector('.map__pin').clientWidth;
 
-
   var getCardsArr = function (count) {
     var maxX = mapWidth - pinWidth;
     var data = [];

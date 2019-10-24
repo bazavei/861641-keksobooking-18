@@ -15,6 +15,7 @@
   var mapPinsElement = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
   var filtersContainer = document.querySelector('.map__filters-container');
+  var data = [];
 
   var renderPins = function (array) {
     var fragment = document.createDocumentFragment();
@@ -68,8 +69,17 @@
     });
   };
 
-  var filterData = function (data) {
-    var filtered = data.filter(filterByType)
+  // var filterData = function (data) {
+  //   var filtered = data.filter(filterByType)
+  //                       .filter(filterByPrice)
+  //                       .filter(filterByRooms)
+  //                       .filter(filterByGuests)
+  //                       .filter(filterByFeatures)
+  //                       .slice(0, 5);
+  //   return filtered;
+  // };
+  var filterData = function (pins) {
+    var filtered = pins.filter(filterByType)
                         .filter(filterByPrice)
                         .filter(filterByRooms)
                         .filter(filterByGuests)
@@ -85,18 +95,23 @@
   //   });
   // };
 
-  var onFilterFormChange = window.util.debounce(function (data) {
-    mapFilterContainer.addEventListener('change', function () {
-      window.pin.remove();
-      renderPins(filterData(data));
-    });
+  // var onFilterFormChange = window.util.debounce(function (data) {
+  //   mapFilterContainer.addEventListener('change', function () {
+  //     window.pin.remove();
+  //     renderPins(filterData(data));
+  //   });
+  // });
+  mapFilterContainer.addEventListener('change', function () {
+    window.pin.remove();
+    renderPins(filterData(data));
   });
 
-  var onLoad = function (data) {
-    // data = window.filter.pinsAmount(data);
-    onFilterFormChange(data);
-    filterData(data);
+  var onLoad = function (res) {
+    data = res;
     renderPins(filterData(data));
+    // data = window.filter.pinsAmount(data);
+    // onFilterFormChange(data);
+    // filterData(data);
     // renderPins(data);
   };
 
