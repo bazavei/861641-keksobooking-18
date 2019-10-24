@@ -26,6 +26,7 @@
       });
     },
     success: function () {
+      successTemlpate.classList.remove('hidden');
       main.insertAdjacentElement('afterbegin', successTemlpate);
       successTemlpate.addEventListener('click', closeSuccessMessage);
       document.addEventListener('keydown', function (evt) {

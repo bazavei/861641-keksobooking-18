@@ -15,6 +15,7 @@
   var mapPinsElement = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
   var filtersContainer = document.querySelector('.map__filters-container');
+  var data = [];
 
   var renderPins = function (array) {
     var fragment = document.createDocumentFragment();
@@ -24,19 +25,98 @@
     mapPinsElement.appendChild(fragment);
   };
 
-  var onLoad = function (cards) {
-    renderPins(cards);
+  var mapFilterContainer = document.querySelector('.map__filters');
+  var housingType = mapFilterContainer.querySelector('#housing-type');
+  var housingPrice = mapFilterContainer.querySelector('#housing-price');
+  var housingRooms = mapFilterContainer.querySelector('#housing-rooms');
+  var housingGuests = mapFilterContainer.querySelector('#housing-guests');
+
+  var filterByType = function (item) {
+    return (housingType.value === 'any' ? true : housingType.value === item.offer.type);
   };
 
-  // var onLoad = function (cards) {
-  //   var fragment = document.createDocumentFragment();
-  //   for (var i = 0; i < cards.length; i++) {
-  //     fragment.appendChild(window.pin.renderPin(cards[i]));
-  //   }
-  //   mapPinsElement.appendChild(fragment);
+  var filterByPrice = function (item) {
+    switch (housingPrice.value) {
+      case 'low':
+        return item.offer.price <= 10000;
+      case 'middle':
+        return item.offer.price >= 10000 && item.offer.price <= 50000;
+      case 'high':
+        return item.offer.price >= 50000;
+    }
+    return (housingPrice.value === 'any' ? true : housingPrice.value === item.offer.price);
+  };
+
+  var filterByRooms = function (item) {
+    return (housingRooms.value === 'any' ? true : item.offer.rooms === parseInt(housingRooms.value, 10));
+  };
+
+  var filterByGuests = function (item) {
+    return (housingGuests.value === 'any' ? true : item.offer.guests === parseInt(housingGuests.value, 10));
+  };
+
+
+  var filterByFeatures = function (item) {
+    var valueCheck = filtersContainer.querySelectorAll('.map__checkbox:checked');
+
+    valueCheck = [].map.call(valueCheck, function (i) {
+      return i;
+    });
+
+    var offerFeatures = item.offer.features;
+    return valueCheck.every(function (feature) {
+      return offerFeatures.includes(feature.value);
+    });
+  };
+
+  // var filterData = function (data) {
+  //   var filtered = data.filter(filterByType)
+  //                       .filter(filterByPrice)
+  //                       .filter(filterByRooms)
+  //                       .filter(filterByGuests)
+  //                       .filter(filterByFeatures)
+  //                       .slice(0, 5);
+  //   return filtered;
+  // };
+  var filterData = function (pins) {
+    var filtered = pins.filter(filterByType)
+                        .filter(filterByPrice)
+                        .filter(filterByRooms)
+                        .filter(filterByGuests)
+                        .filter(filterByFeatures)
+                        .slice(0, 5);
+    return filtered;
+  };
+
+  // var onFilterFormChange = function (data) {
+  //   mapFilterContainer.addEventListener('change', function () {
+  //     window.pin.remove();
+  //     renderPins(filterData(data));
+  //   });
   // };
 
+  // var onFilterFormChange = window.util.debounce(function (data) {
+  //   mapFilterContainer.addEventListener('change', function () {
+  //     window.pin.remove();
+  //     renderPins(filterData(data));
+  //   });
+  // });
+  mapFilterContainer.addEventListener('change', function () {
+    window.pin.remove();
+    renderPins(filterData(data));
+  });
+
+  var onLoad = function (res) {
+    data = res;
+    renderPins(filterData(data));
+    // data = window.filter.pinsAmount(data);
+    // onFilterFormChange(data);
+    // filterData(data);
+    // renderPins(data);
+  };
+
   var openCard = function (card) {
+    window.card.remove();
     var cardElement = window.card.render(card);
     filtersContainer.prepend(cardElement);
   };
@@ -57,7 +137,6 @@
   };
 
   var onMainPinClick = function () {
-    // renderPins(window.data.cards);
     defaultPageStatus(true);
   };
 
