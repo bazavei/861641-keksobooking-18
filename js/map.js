@@ -55,18 +55,14 @@
     return (housingGuests.value === 'any' ? true : item.offer.guests === parseInt(housingGuests.value, 10));
   };
 
+  var getFilterByFeatures = function () {
+    var checkedList = Array.from(filtersContainer.querySelectorAll('.map__checkbox:checked'));
 
-  var filterByFeatures = function (item) {
-    var valueCheck = filtersContainer.querySelectorAll('.map__checkbox:checked');
-
-    valueCheck = [].map.call(valueCheck, function (i) {
-      return i;
-    });
-
-    var offerFeatures = item.offer.features;
-    return valueCheck.every(function (feature) {
-      return offerFeatures.includes(feature.value);
-    });
+    return function (item) {
+      return checkedList.every(function (feature) {
+        return item.offer.features.includes(feature.value);
+      });
+    };
   };
 
   var filterData = function (pins) {
@@ -74,7 +70,7 @@
                         .filter(filterByPrice)
                         .filter(filterByRooms)
                         .filter(filterByGuests)
-                        .filter(filterByFeatures)
+                        .filter(getFilterByFeatures())
                         .slice(0, 5);
     return filtered;
   };
