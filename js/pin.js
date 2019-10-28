@@ -29,7 +29,6 @@
     });
   };
 
-
   window.pin = {
     render: renderPin,
     remove: removePin

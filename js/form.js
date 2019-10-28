@@ -1,5 +1,3 @@
-// работает с формой объявления
-
 'use strict';
 
 (function () {
@@ -7,6 +5,8 @@
   var addressInput = adForm.querySelector('input[name=address]');
   var roomNumberSelect = adForm.querySelector('#room_number');
   var capacitySelest = adForm.querySelector('#capacity');
+
+  var filterForm = document.querySelector('.map__filters');
 
   var price = adForm.querySelector('#price');
   var timeIn = adForm.querySelector('#timein');
@@ -65,7 +65,8 @@
 
   var inputs = adForm.querySelectorAll('input');
   var selects = adForm.querySelectorAll('select');
-
+  var filterInputs = filterForm.querySelectorAll('input');
+  var filterSelects = filterForm.querySelectorAll('select');
 
   var activate = function () {
     adForm.classList.remove('ad-form--disabled');
@@ -73,10 +74,17 @@
     setDisabled(selects, false);
   };
 
+  var filterFormActivate = function () {
+    setDisabled(filterInputs, false);
+    setDisabled(filterSelects, false);
+  };
+
   var deactivate = function () {
     adForm.classList.add('ad-form--disabled');
     setDisabled(inputs, true);
     setDisabled(selects, true);
+    setDisabled(filterInputs, true);
+    setDisabled(filterSelects, true);
   };
 
   var setAddress = function (coordX, coordY) {
@@ -104,12 +112,17 @@
   timeIn.addEventListener('change', onTimeInChange);
   timeOut.addEventListener('change', onTimeOutChange);
 
+  adForm.addEventListener('reset', function () {
+    window.map.defaultPageStatus(false);
+  });
+
   onCapacityChange();
   onTypeChange();
 
   window.form = {
     activate: activate,
     setAddress: setAddress,
-    deactivate: deactivate
+    deactivate: deactivate,
+    filterActivate: filterFormActivate
   };
 })();

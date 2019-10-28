@@ -77,6 +77,7 @@
 
   var onFilterFormChangeDebounce = window.util.debounce(function () {
     window.pin.remove();
+    window.card.remove();
     renderPins(filterData(data));
   });
 
@@ -85,6 +86,7 @@
   var onLoad = function (res) {
     data = res;
     renderPins(filterData(data));
+    window.form.filterActivate();
   };
 
   var openCard = function (card) {
@@ -103,6 +105,7 @@
       locationMainPin.y = Math.floor(mainPin.offsetTop + PIN_HEIGHT + PIN_TIP_HEIGHT);
 
     } else {
+      locationMainPin.x = Math.floor(mainPin.offsetLeft + PIN_WIDTH / 2);
       locationMainPin.y = Math.floor(mainPin.offsetTop + PIN_HEIGHT / 2 + PIN_TIP_HEIGHT);
     }
     window.form.setAddress(locationMainPin.x, locationMainPin.y);
@@ -121,6 +124,8 @@
     } else {
       document.querySelector('.map').classList.add('map--faded');
       window.form.deactivate();
+      window.pin.remove();
+      window.card.remove();
       setPinCoordinate(false);
     }
   };
