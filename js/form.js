@@ -89,6 +89,7 @@
 
   var setAddress = function (coordX, coordY) {
     addressInput.value = coordX + ', ' + coordY;
+    addressInput.placeholder = coordX + ', ' + coordY;
   };
 
   var onSave = function () {

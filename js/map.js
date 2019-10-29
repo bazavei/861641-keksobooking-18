@@ -7,10 +7,13 @@
   var PIN_WIDTH = 65;
   var PIN_HEIGHT = 65;
   var PIN_TIP_HEIGHT = 15;
+  var START_COORD_X = 570;
+  var START_COORD_Y = 375;
   var MIN_Y = 130;
   var MAX_VALUE = 630;
   var MAX_Y = MAX_VALUE - PIN_HEIGHT - PIN_TIP_HEIGHT;
-  var MAX_X = document.querySelector('.map__pins').offsetWidth - PIN_WIDTH;
+  var MAX_X = Math.floor(document.querySelector('.map__pins').offsetWidth - (PIN_WIDTH / 2));
+  // var MAX_X = document.querySelector('.map__pins').offsetWidth - PIN_WIDTH;
 
   var mapPinsElement = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
@@ -101,14 +104,19 @@
       y: null
     };
     if (activePage) {
-      locationMainPin.x = Math.floor(mainPin.offsetLeft + PIN_WIDTH / 2 + PIN_TIP_HEIGHT);
+      locationMainPin.x = Math.floor(mainPin.offsetLeft + PIN_WIDTH / 2);
       locationMainPin.y = Math.floor(mainPin.offsetTop + PIN_HEIGHT + PIN_TIP_HEIGHT);
 
     } else {
       locationMainPin.x = Math.floor(mainPin.offsetLeft + PIN_WIDTH / 2);
-      locationMainPin.y = Math.floor(mainPin.offsetTop + PIN_HEIGHT / 2 + PIN_TIP_HEIGHT);
+      locationMainPin.y = Math.floor(mainPin.offsetTop + PIN_HEIGHT / 2);
     }
     window.form.setAddress(locationMainPin.x, locationMainPin.y);
+  };
+
+  var setPinCoordinateDefault = function () {
+    mainPin.style.top = START_COORD_Y + 'px';
+    mainPin.style.left = START_COORD_X + 'px';
   };
 
   var onMainPinClick = function () {
@@ -127,6 +135,7 @@
       window.pin.remove();
       window.card.remove();
       setPinCoordinate(false);
+      setPinCoordinateDefault();
     }
   };
 
@@ -157,6 +166,7 @@
       mainPin.style.top = valueY + 'px';
 
       var valueX = mainPin.offsetLeft - shift.x;
+
       valueX = Math.min(valueX, MAX_X);
       valueX = Math.max(valueX, 0);
       mainPin.style.left = valueX + 'px';
