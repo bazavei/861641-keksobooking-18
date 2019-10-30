@@ -94,7 +94,6 @@
 
   var onSave = function () {
     adForm.reset();
-    // deactivate();
     window.map.defaultPageStatus(false);
     window.message.success();
     window.pin.remove();

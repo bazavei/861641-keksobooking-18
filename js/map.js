@@ -194,7 +194,6 @@
   window.map = {
     renderPins: renderPins,
     openCard: openCard,
-    mainPin: mainPin,
     defaultPageStatus: defaultPageStatus
   };
 })();
