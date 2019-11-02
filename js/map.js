@@ -1,6 +1,3 @@
-// управляет карточками объявлений и пинами: добавляет на страницу нужную карточку,
-// отрисовывает пины и осуществляет взаимодействие карточки и метки на карте
-
 'use strict';
 
 (function () {
@@ -11,9 +8,7 @@
   var START_COORD_Y = 375;
   var MIN_Y = 130;
   var MAX_VALUE = 630;
-  // var MAX_Y = MAX_VALUE - PIN_HEIGHT - PIN_TIP_HEIGHT;
   var MAX_X = Math.floor(document.querySelector('.map__pins').offsetWidth - (PIN_WIDTH / 2));
-  // var MAX_X = document.querySelector('.map__pins').offsetWidth - PIN_WIDTH;
 
   var mapPinsElement = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
@@ -22,9 +17,6 @@
 
   var renderPins = function (array) {
     var fragment = document.createDocumentFragment();
-    // for (var j = 0; j < array.length; j++) {
-    //   fragment.appendChild(window.pin.render(array[j]));
-    // }
     array.forEach(function (item) {
       fragment.appendChild(window.pin.render(item));
     });
@@ -164,7 +156,6 @@
       };
       var valueY = mainPin.offsetTop - shift.y;
 
-      // valueY = Math.min(valueY, MAX_Y);
       valueY = Math.min(valueY, MAX_VALUE);
       valueY = Math.max(valueY, MIN_Y);
       mainPin.style.top = valueY + 'px';

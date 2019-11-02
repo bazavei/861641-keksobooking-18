@@ -56,9 +56,6 @@
   };
 
   var setDisabled = function (list, value) {
-    // for (var i = 0; i < list.length; i++) {
-    //   list[i].disabled = value;
-    // }
     list.forEach(function (item) {
       item.disabled = value;
     });
