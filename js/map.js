@@ -11,7 +11,7 @@
   var START_COORD_Y = 375;
   var MIN_Y = 130;
   var MAX_VALUE = 630;
-  var MAX_Y = MAX_VALUE - PIN_HEIGHT - PIN_TIP_HEIGHT;
+  // var MAX_Y = MAX_VALUE - PIN_HEIGHT - PIN_TIP_HEIGHT;
   var MAX_X = Math.floor(document.querySelector('.map__pins').offsetWidth - (PIN_WIDTH / 2));
   // var MAX_X = document.querySelector('.map__pins').offsetWidth - PIN_WIDTH;
 
@@ -22,9 +22,12 @@
 
   var renderPins = function (array) {
     var fragment = document.createDocumentFragment();
-    for (var j = 0; j < array.length; j++) {
-      fragment.appendChild(window.pin.render(array[j]));
-    }
+    // for (var j = 0; j < array.length; j++) {
+    //   fragment.appendChild(window.pin.render(array[j]));
+    // }
+    array.forEach(function (item) {
+      fragment.appendChild(window.pin.render(item));
+    });
     mapPinsElement.appendChild(fragment);
   };
 
@@ -128,7 +131,7 @@
       document.querySelector('.map').classList.remove('map--faded');
       window.form.activate();
       setPinCoordinate(true);
-      window.backend.load(onLoad, window.message.error);
+      window.backend.load(onLoad, window.message.setError);
     } else {
       document.querySelector('.map').classList.add('map--faded');
       window.form.deactivate();
@@ -161,7 +164,8 @@
       };
       var valueY = mainPin.offsetTop - shift.y;
 
-      valueY = Math.min(valueY, MAX_Y);
+      // valueY = Math.min(valueY, MAX_Y);
+      valueY = Math.min(valueY, MAX_VALUE);
       valueY = Math.max(valueY, MIN_Y);
       mainPin.style.top = valueY + 'px';
 

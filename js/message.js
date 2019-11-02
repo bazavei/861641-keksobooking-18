@@ -8,14 +8,19 @@
 
   var closeErrorMessage = function () {
     errorTemlpate.classList.add('hidden');
+
+    document.removeEventListener('keydown', closeErrorMessage);
+    errorButton.removeEventListener('click', closeErrorMessage);
   };
 
   var closeSuccessMessage = function () {
     successTemlpate.classList.add('hidden');
+    document.removeEventListener('keydown', closeSuccessMessage);
+    successTemlpate.removeEventListener('click', closeSuccessMessage);
   };
 
   window.message = {
-    error: function (errorMessage) {
+    setError: function (errorMessage) {
       main.insertAdjacentElement('afterbegin', errorTemlpate);
       errorButton.addEventListener('click', closeErrorMessage);
       var errorText = main.querySelector('.error__message');
@@ -25,7 +30,7 @@
         window.util.isEscEvent(evt, closeErrorMessage);
       });
     },
-    success: function () {
+    setSuccess: function () {
       successTemlpate.classList.remove('hidden');
       main.insertAdjacentElement('afterbegin', successTemlpate);
       successTemlpate.addEventListener('click', closeSuccessMessage);

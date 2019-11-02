@@ -56,9 +56,12 @@
   };
 
   var setDisabled = function (list, value) {
-    for (var i = 0; i < list.length; i++) {
-      list[i].disabled = value;
-    }
+    // for (var i = 0; i < list.length; i++) {
+    //   list[i].disabled = value;
+    // }
+    list.forEach(function (item) {
+      item.disabled = value;
+    });
     adForm.querySelector('#description').disabled = value;
     adForm.querySelector('.ad-form__element--submit').disabled = value;
   };
@@ -94,14 +97,15 @@
 
   var onSave = function () {
     adForm.reset();
+    filterForm.reset();
     window.map.defaultPageStatus(false);
-    window.message.success();
+    window.message.setSuccess();
     window.pin.remove();
     window.card.remove();
   };
 
   adForm.addEventListener('submit', function (evt) {
-    window.backend.save(new FormData(adForm), onSave, window.message.error);
+    window.backend.save(new FormData(adForm), onSave, window.message.setError);
     evt.preventDefault();
   });
 
