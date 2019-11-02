@@ -1,4 +1,3 @@
-// отвечает за создание пина
 'use strict';
 
 (function () {
@@ -28,7 +27,6 @@
       }
     });
   };
-
 
   window.pin = {
     render: renderPin,

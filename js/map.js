@@ -1,16 +1,14 @@
-// управляет карточками объявлений и пинами: добавляет на страницу нужную карточку,
-// отрисовывает пины и осуществляет взаимодействие карточки и метки на карте
-
 'use strict';
 
 (function () {
   var PIN_WIDTH = 65;
   var PIN_HEIGHT = 65;
   var PIN_TIP_HEIGHT = 15;
+  var START_COORD_X = 570;
+  var START_COORD_Y = 375;
   var MIN_Y = 130;
   var MAX_VALUE = 630;
-  var MAX_Y = MAX_VALUE - PIN_HEIGHT - PIN_TIP_HEIGHT;
-  var MAX_X = document.querySelector('.map__pins').offsetWidth - PIN_WIDTH;
+  var MAX_X = Math.floor(document.querySelector('.map__pins').offsetWidth - (PIN_WIDTH / 2));
 
   var mapPinsElement = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
@@ -19,9 +17,9 @@
 
   var renderPins = function (array) {
     var fragment = document.createDocumentFragment();
-    for (var j = 0; j < array.length; j++) {
-      fragment.appendChild(window.pin.render(array[j]));
-    }
+    array.forEach(function (item) {
+      fragment.appendChild(window.pin.render(item));
+    });
     mapPinsElement.appendChild(fragment);
   };
 
@@ -55,18 +53,14 @@
     return (housingGuests.value === 'any' ? true : item.offer.guests === parseInt(housingGuests.value, 10));
   };
 
+  var getFilterByFeatures = function () {
+    var checkedList = Array.from(filtersContainer.querySelectorAll('.map__checkbox:checked'));
 
-  var filterByFeatures = function (item) {
-    var valueCheck = filtersContainer.querySelectorAll('.map__checkbox:checked');
-
-    valueCheck = [].map.call(valueCheck, function (i) {
-      return i;
-    });
-
-    var offerFeatures = item.offer.features;
-    return valueCheck.every(function (feature) {
-      return offerFeatures.includes(feature.value);
-    });
+    return function (item) {
+      return checkedList.every(function (feature) {
+        return item.offer.features.includes(feature.value);
+      });
+    };
   };
 
   var filterData = function (pins) {
@@ -74,13 +68,14 @@
                         .filter(filterByPrice)
                         .filter(filterByRooms)
                         .filter(filterByGuests)
-                        .filter(filterByFeatures)
+                        .filter(getFilterByFeatures())
                         .slice(0, 5);
     return filtered;
   };
 
   var onFilterFormChangeDebounce = window.util.debounce(function () {
     window.pin.remove();
+    window.card.remove();
     renderPins(filterData(data));
   });
 
@@ -89,6 +84,7 @@
   var onLoad = function (res) {
     data = res;
     renderPins(filterData(data));
+    window.form.filterActivate();
   };
 
   var openCard = function (card) {
@@ -103,13 +99,19 @@
       y: null
     };
     if (activePage) {
-      locationMainPin.x = Math.floor(mainPin.offsetLeft + PIN_WIDTH / 2 + PIN_TIP_HEIGHT);
+      locationMainPin.x = Math.floor(mainPin.offsetLeft + PIN_WIDTH / 2);
       locationMainPin.y = Math.floor(mainPin.offsetTop + PIN_HEIGHT + PIN_TIP_HEIGHT);
 
     } else {
-      locationMainPin.y = Math.floor(mainPin.offsetTop + PIN_HEIGHT / 2 + PIN_TIP_HEIGHT);
+      locationMainPin.x = Math.floor(mainPin.offsetLeft + PIN_WIDTH / 2);
+      locationMainPin.y = Math.floor(mainPin.offsetTop + PIN_HEIGHT / 2);
     }
     window.form.setAddress(locationMainPin.x, locationMainPin.y);
+  };
+
+  var setPinCoordinateDefault = function () {
+    mainPin.style.top = START_COORD_Y + 'px';
+    mainPin.style.left = START_COORD_X + 'px';
   };
 
   var onMainPinClick = function () {
@@ -121,11 +123,14 @@
       document.querySelector('.map').classList.remove('map--faded');
       window.form.activate();
       setPinCoordinate(true);
-      window.backend.load(onLoad, window.message.error);
+      window.backend.load(onLoad, window.message.setError);
     } else {
       document.querySelector('.map').classList.add('map--faded');
       window.form.deactivate();
+      window.pin.remove();
+      window.card.remove();
       setPinCoordinate(false);
+      setPinCoordinateDefault();
     }
   };
 
@@ -151,11 +156,12 @@
       };
       var valueY = mainPin.offsetTop - shift.y;
 
-      valueY = Math.min(valueY, MAX_Y);
+      valueY = Math.min(valueY, MAX_VALUE);
       valueY = Math.max(valueY, MIN_Y);
       mainPin.style.top = valueY + 'px';
 
       var valueX = mainPin.offsetLeft - shift.x;
+
       valueX = Math.min(valueX, MAX_X);
       valueX = Math.max(valueX, 0);
       mainPin.style.left = valueX + 'px';
@@ -183,7 +189,6 @@
   window.map = {
     renderPins: renderPins,
     openCard: openCard,
-    mainPin: mainPin,
     defaultPageStatus: defaultPageStatus
   };
 })();

@@ -1,5 +1,3 @@
-// работает с формой объявления
-
 'use strict';
 
 (function () {
@@ -7,6 +5,8 @@
   var addressInput = adForm.querySelector('input[name=address]');
   var roomNumberSelect = adForm.querySelector('#room_number');
   var capacitySelest = adForm.querySelector('#capacity');
+
+  var filterForm = document.querySelector('.map__filters');
 
   var price = adForm.querySelector('#price');
   var timeIn = adForm.querySelector('#timein');
@@ -56,16 +56,17 @@
   };
 
   var setDisabled = function (list, value) {
-    for (var i = 0; i < list.length; i++) {
-      list[i].disabled = value;
-    }
+    list.forEach(function (item) {
+      item.disabled = value;
+    });
     adForm.querySelector('#description').disabled = value;
     adForm.querySelector('.ad-form__element--submit').disabled = value;
   };
 
   var inputs = adForm.querySelectorAll('input');
   var selects = adForm.querySelectorAll('select');
-
+  var filterInputs = filterForm.querySelectorAll('input');
+  var filterSelects = filterForm.querySelectorAll('select');
 
   var activate = function () {
     adForm.classList.remove('ad-form--disabled');
@@ -73,27 +74,35 @@
     setDisabled(selects, false);
   };
 
+  var filterFormActivate = function () {
+    setDisabled(filterInputs, false);
+    setDisabled(filterSelects, false);
+  };
+
   var deactivate = function () {
     adForm.classList.add('ad-form--disabled');
     setDisabled(inputs, true);
     setDisabled(selects, true);
+    setDisabled(filterInputs, true);
+    setDisabled(filterSelects, true);
   };
 
   var setAddress = function (coordX, coordY) {
     addressInput.value = coordX + ', ' + coordY;
+    addressInput.placeholder = coordX + ', ' + coordY;
   };
 
   var onSave = function () {
     adForm.reset();
-    // deactivate();
+    filterForm.reset();
     window.map.defaultPageStatus(false);
-    window.message.success();
+    window.message.setSuccess();
     window.pin.remove();
     window.card.remove();
   };
 
   adForm.addEventListener('submit', function (evt) {
-    window.backend.save(new FormData(adForm), onSave, window.message.error);
+    window.backend.save(new FormData(adForm), onSave, window.message.setError);
     evt.preventDefault();
   });
 
@@ -104,12 +113,17 @@
   timeIn.addEventListener('change', onTimeInChange);
   timeOut.addEventListener('change', onTimeOutChange);
 
+  adForm.addEventListener('reset', function () {
+    window.map.defaultPageStatus(false);
+  });
+
   onCapacityChange();
   onTypeChange();
 
   window.form = {
     activate: activate,
     setAddress: setAddress,
-    deactivate: deactivate
+    deactivate: deactivate,
+    filterActivate: filterFormActivate
   };
 })();
