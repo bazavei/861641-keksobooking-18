@@ -1,8 +1,6 @@
 'use strict';
 
 (function () {
-  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
-
   var photoContainer = document.querySelector('.ad-form__photo-container');
   var photoChooser = photoContainer.querySelector('#images');
   var photoWrap = photoContainer.querySelector('.ad-form__photo');
@@ -31,7 +29,7 @@
     deleteEmptyPhoto();
     files.forEach(function (file) {
       var fileName = file.name.toLowerCase();
-      var mathes = FILE_TYPES.some(function (it) {
+      var mathes = window.util.FILE_TYPES.some(function (it) {
         return fileName.endsWith(it);
       });
 

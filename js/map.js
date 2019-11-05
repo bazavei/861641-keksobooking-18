@@ -114,8 +114,14 @@
     mainPin.style.left = START_COORD_X + 'px';
   };
 
-  var onMainPinClick = function () {
-    defaultPageStatus(true);
+  var isActivePage = false;
+
+  var onMainPinClick = function (evt) {
+    evt.preventDefault();
+    if (!isActivePage) {
+      defaultPageStatus(true);
+      isActivePage = true;
+    }
   };
 
   var defaultPageStatus = function (status) {

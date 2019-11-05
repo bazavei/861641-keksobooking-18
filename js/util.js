@@ -4,9 +4,11 @@
   var ENTER_KEYCODE = 13;
   var ESC_KEYCODE = 27;
   var DEBOUNCE_INTERVAL = 500;
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
   window.util = {
     ESC_KEYCODE: ESC_KEYCODE,
+    FILE_TYPES: FILE_TYPES,
 
     getRandom: function (min, max) {
       return Math.floor(Math.random() * (max - min) + min);

@@ -4,7 +4,7 @@
   var adForm = document.querySelector('.ad-form');
   var addressInput = adForm.querySelector('input[name=address]');
   var roomNumberSelect = adForm.querySelector('#room_number');
-  var capacitySelest = adForm.querySelector('#capacity');
+  var capacitySeleсt = adForm.querySelector('#capacity');
 
   var filterForm = document.querySelector('.map__filters');
 
@@ -15,16 +15,16 @@
 
   var onCapacityChange = function () {
     var countRoom = parseInt(roomNumberSelect.value, 10);
-    var countQuests = parseInt(capacitySelest.value, 10);
+    var countQuests = parseInt(capacitySeleсt.value, 10);
 
     if (countRoom < countQuests) {
-      capacitySelest.setCustomValidity('выбранное количество гостей не подходит под количество комнат');
+      capacitySeleсt.setCustomValidity('выбранное количество гостей не подходит под количество комнат');
     } else if (countRoom === 100 && countQuests !== 0) {
-      capacitySelest.setCustomValidity('выбранное количество гостей не подходит под количество комнат');
+      capacitySeleсt.setCustomValidity('выбранное количество гостей не подходит под количество комнат');
     } else if (countRoom !== 100 && countQuests === 0) {
-      capacitySelest.setCustomValidity('выбранное количество гостей не подходит под количество комнат');
+      capacitySeleсt.setCustomValidity('выбранное количество гостей не подходит под количество комнат');
     } else {
-      capacitySelest.setCustomValidity('');
+      capacitySeleсt.setCustomValidity('');
     }
   };
 
@@ -34,12 +34,6 @@
 
   var onTimeOutChange = function () {
     timeIn.value = timeOut.value;
-  };
-
-  var onPriceChange = function () {
-    if (price.value > 1000000) {
-      price.setCustomValidity('Цена слишком высока');
-    }
   };
 
   var typeMinPriceMap = {
@@ -109,7 +103,6 @@
   adForm.addEventListener('change', onCapacityChange, true);
   type.addEventListener('change', onTypeChange);
 
-  price.addEventListener('change', onPriceChange);
   timeIn.addEventListener('change', onTimeInChange);
   timeOut.addEventListener('change', onTimeOutChange);
 

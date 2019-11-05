@@ -1,8 +1,6 @@
 'use strict';
 
 (function () {
-  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
-
   var fileChooser = document.querySelector('#avatar');
   var previewWrap = document.querySelector('.ad-form-header__preview');
   var preview = previewWrap.querySelector('img');
@@ -11,7 +9,7 @@
     var file = fileChooser.files[0];
     var fileName = file.name.toLowerCase();
 
-    var mathes = FILE_TYPES.some(function (it) {
+    var mathes = window.util.FILE_TYPES.some(function (it) {
       return fileName.endsWith(it);
     });
 
